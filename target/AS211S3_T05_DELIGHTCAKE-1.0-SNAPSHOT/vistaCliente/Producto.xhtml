@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+        <h:head>
+            <title>PRODUCTO</title>
+            <f:event listener="#{ProductoIMGC.listar()}" type="preRenderView"/>
+        </h:head>
+        <center>
+            <p:growl id="mensajes" severity="info,fatal" showSummary="true" showDetail="true">
+                <p:autoUpdate/>
+            </p:growl>
+
+            <h:body id="body">
+                <h:form>
+                    <h1 style="color:black; font-weight:bold; font-size:40px">LISTADO DE PRODUCTOS</h1>              
+                </h:form>
+                
+                <p:carousel value="#{ProductoIMGC.lstProductoIMG}" var="product" circular="true" autoPlayInterval="3000" numVisible="3">
+                    <div class="product-item">
+                        <div class="product-item-content">
+                            <div class="mb-3">
+                                <img src="../image/#{product.IMGPRO}.png" height=" 80 px" styleClass="product-image"/>
+                            </div>
+                            <div>
+                                <h4 class="mb-1">#{product.NOMPRO}</h4>
+                                <h6 class="mt-0 mb-3">
+                                    <h:outputText value="#{product.PREPRO}">
+                                        <f:convertNumber type="currency" pattern="¤#0" currencySymbol="$" />
+                                    </h:outputText>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </p:carousel>
+                <h:form>
+                    <p:fragment>
+                        <p:dialog id="dlgTiempo" header="TIEMPO RESTANTE DE SESIÓN" widgetVar="wdlgTiempo" modal="true"
+                                  showEffect="fade" hideEffect="fade" resizable="false" minimizable="false" maximizable="false">
+                            <div align="center">
+                                <p:outputLabel value="TIEMPO RESTANTE DE SESIÓN = " style="color:black; font-size:20px; font-weight:bold"/>
+                                <h:outputText id="contador1" value="#{UsuarioC.tiempo}" style="color:red; font-size:25px; font-weight:bold"/>
+                                <p:progressBar id="contador2" value="#{UsuarioC.tiempo}" displayOnly="true"/>
+                                <p:poll id="poll" interval="1" process="contador1" listener="#{UsuarioC.tiempoSesion()}" update="contador1 contador2"/> 
+                                <p:idleMonitor timeout="1">
+                                    <p:ajax event="active" listener="#{UsuarioC.activarSesion()}"/>
+                                </p:idleMonitor>
+                            </div>
+                        </p:dialog>
+                    </p:fragment>
+                    <center>        
+                        <p:dataGrid var="prod" value="#{ProductoIMGC.lstProductoIMG}" columns="3" layout="grid"
+                                    id="productos">
+                            <p:dialog header="ingrese la cantidad" widgetVar="wdlgcant" id="dlgcant" >
+                                <h:form>
+                                    <h:panelGrid columns="1">
+                                        <p:outputLabel value="Cantidad"/>
+                                        <p:inputText value="#{VentaDetalleC.ventadetalle.CANVENDET}" id="cantidad"/>
+                                    </h:panelGrid>         
+                                </h:form>
+                                <center>
+                                    <p:commandButton value="ok"  action="#{VentaDetalleC.agregarFila()}" oncomplete="if(!args.validationFailed)PF('wdlgcant').hide();"/>
+                                </center>
+                            </p:dialog>
+
+                            <f:facet name="header">
+                                Productos Registrados
+                            </f:facet>
+
+                            <p:panel header="#{prod.IDPRO}" style="text-align:center">
+
+                                <h:panelGrid columns="1" style="width:100%" >
+
+                                    <img src="../image/#{prod.IMGPRO}.png" height=" 80 px"/>
+                                    <h:outputText value="Nombre : #{prod.NOMPRO}" />
+                                    <p:spacer height="10 px"/>
+                                    <h:outputText value="Descripcion : #{prod.DESPRO}" />
+                                    <p:spacer height="10 px"/>
+                                    <h:outputText value="#{prod.PREPRO}" style="font-size:20px; font-weight: bold">
+                                        <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="$" />
+                                    </h:outputText>
+                                    <p:spacer height="10 px"/>
+                                    <h:outputText value="Stock : #{prod.STOPRO}" />
+                                </h:panelGrid>
+                                <p:commandButton icon="pi pi-shopping-cart" value="Agregar" actionListener="#{VentaDetalleC.agregar(prod.NOMPRO)}" oncomplete="PF('wdlgcant').show()"/>
+                            </p:panel>
+                        </p:dataGrid>
+                    </center>
+                </h:form>
+            </h:body>
+            <script src="../resources/js/v.js" type="text/javascript"></script>
+        </center>
+    </ui:define>
+</ui:composition>

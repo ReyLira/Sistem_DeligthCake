@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <head>
+        <title>Login DelightCake</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <h:body>
+        <h:form>
+            <p:growl id="msj" showDetail="true" life="2000"/>
+            <p:panelGrid columns="2">
+                <p:inputText value="#{UsuarioC.usuario}" placeholder="Usuario" />
+                <p:password value="#{UsuarioC.password}" placeholder="Contraseña" />
+            </p:panelGrid>
+            <p:commandButton value="Ingresar" action="#{UsuarioC.login()}" update="msj"/> 
+        </h:form>
+<!--        <div class="overlay"><h:form>
+
+                <div class="con">
+                         Start  header Content  
+                    <header class="head-form">
+
+                        <h2>Inicio de Sesión</h2>
+
+
+                        <p>Bienvenido a la DelightCake</p>
+                    </header>
+                         End  header Content  
+                    <br />
+
+                    <div class="field-set">
+
+                           user name 
+                        <span class="input-item">
+                            <i class="fa fa-user-circle" />
+                        </span>
+                           user name Input
+                        <input class="form-input" id="txt-input" value="#{UsuarioC.usuario}" type="text" placeholder="Usuario"/>
+
+                        <br />
+
+                           Password 
+
+                        <span class="input-item">
+                            <i class="fa fa-key" />
+                        </span>
+                           Password Input
+                        <input class="form-input" type="password"  value="#{UsuarioC.password}" placeholder="Contraseña" id="pwd" name="password"/>
+
+                              Show/hide password  
+                        <span>
+                            <i class="fa fa-eye" aria-hidden="true" type="button" id="eye" />
+                        </span>
+
+
+                        <br />        buttons       button LogIn 
+                        <p:commandButton value="Ingresar" action="#{UsuarioC.login()}"/> 
+                    </div>
+
+                       other buttons 
+
+                    <div class="other">      Forgot Password button
+                        <button class="btn submits frgt-pass">¿Has olvidado tu contraseña?</button>     Sign Up button 
+                        <button class="btn submits sign-up">Regístrate
+                                     Sign Up font icon 
+                            <i class="fa fa-user-plus" aria-hidden="true" />
+                        </button>      End Other the Division 
+                    </div>
+
+                       End Conrainer  
+                </div>
+
+                 End Form </h:form></div>-->
+
+    </h:body>
+    <script src="../resources/js/Loguin.js" type="text/javascript"></script>
+    <link href="../resources/css/flags/login.css" rel="stylesheet" type="text/css"/>
+</html>

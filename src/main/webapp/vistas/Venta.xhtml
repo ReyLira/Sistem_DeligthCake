@@ -1,0 +1,247 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+        <h:head>
+            <f:event listener="#{VentaDetalleC.listarVenta()}" type="preRenderView"/>
+            <f:event type="preRenderView" listener="#{UsuarioC.seguridadSesionEmpleado()}"/>
+        </h:head>
+        <center>
+            <p:growl id="mensajes" severity="info,fatal" showSummary="true" showDetail="true">
+                <p:autoUpdate/>
+            </p:growl>
+
+            <h:body>
+
+                <h:form>
+                    <h1 style="color:black; font-weight:bold; font-size:40px">GENERACIÓN DE VENTA</h1>              
+                </h:form>
+
+                <h:form>
+                    <p:fragment>
+                        <p:dialog id="dlgTiempo" header="TIEMPO RESTANTE DE SESIÓN" widgetVar="wdlgTiempo" modal="true"
+                                  showEffect="fade" hideEffect="fade" resizable="false" minimizable="false" maximizable="false">
+                            <div align="center">
+                                <p:outputLabel value="TIEMPO RESTANTE DE SESIÓN = " style="color:black; font-size:20px; font-weight:bold"/>
+                                <h:outputText id="contador1" value="#{UsuarioC.tiempo}" style="color:red; font-size:25px; font-weight:bold"/>
+                                <p:progressBar id="contador2" value="#{UsuarioC.tiempo}" displayOnly="true"/>
+                                <p:poll id="poll" interval="1" process="contador1" listener="#{UsuarioC.tiempoSesion()}" update="contador1 contador2"/> 
+                                <p:idleMonitor timeout="1">
+                                    <p:ajax event="active" listener="#{UsuarioC.activarSesion()}"/>
+                                </p:idleMonitor>
+                            </div>
+                        </p:dialog>
+                    </p:fragment>
+                </h:form>
+
+                <h:form id="frmVenta">
+                    <p:panelGrid columns="3" styleClass="ui-noborder">
+
+                        <p:outputLabel value="CLIENTE" for="cli" style="color:black; font-weight:bold; font-size:16px"/>
+                        <p:selectOneMenu id="cli" value="#{VentaDetalleC.venta.cliente.IDCLI}" style="width:300px"
+                                         filter="true" filterMatchMode="contains" required="true" requiredMessage="Seleccione el Cliente" >
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                            <f:selectItems value="#{ClienteC.lstCliente}" var="cliente"
+                                           itemValue="#{cliente.IDCLI}"
+                                           itemLabel="#{cliente.NOMCLI}
+                                           #{cliente.APEPATCLI} #{cliente.APEMATCLI}"/>
+                        </p:selectOneMenu>
+                        <p:message id="msgIDCLI" for="cli"/>
+
+
+                        <p:outputLabel value="EMPLEADO" for="emp" style="color:black; font-weight:bold; font-size:16px"/>
+                        <p:selectOneMenu id="emp" value="#{VentaDetalleC.venta.empleado.IDEMP}" style="width:300px"
+                                         filter="true" filterMatchMode="contains" required="true" requiredMessage="Seleccione el Empleado" >
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                            <f:selectItems value="#{EmpleadoC.lstEmpleado}" var="empleado"
+                                           itemValue="#{empleado.IDEMP}"
+                                           itemLabel="#{empleado.NOMEMP}
+                                           #{empleado.APEPATEMP} #{empleado.APEMATEMP}"/>
+                        </p:selectOneMenu>
+                        <p:message id="msgIDEMP" for="emp"/>
+
+
+                        <p:outputLabel value="PRODUCTO" for="pro" style="color:black; font-weight:bold; font-size:16px"/>
+                        <p:selectOneMenu id="pro" value="#{VentaDetalleC.ventadetalle.producto.IDPRO}" style="width:300px" 
+                                         filter="true" filterMatchMode="contains" required="true" requiredMessage="Seleccione el Producto" >
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                            <f:selectItems value="#{ProductoC.lstProducto}" var="producto"
+                                           itemValue="#{producto.IDPRO}"
+                                           itemLabel="#{producto.NOMPRO} (#{producto.DESPRO})"/>
+                            <p:ajax listener="#{VentaDetalleC.obtenerPrecioStock()}" update="precio stock"/>
+                        </p:selectOneMenu>
+                        <p:message id="msgIDPRO" for="pro"/>
+
+                        <p:outputLabel  value="CANTIDAD" for="cantidad" style="color:black; font-weight:bold; font-size:16px" />
+                        <p:spinner id="cantidad" value="#{VentaDetalleC.ventadetalle.CANVENDET}" max="10" min="1"
+                                   required="true" requiredMessage="Ingrese la Cantidad" maxlength="2" style="width: 165px">
+                        </p:spinner>
+                        <p:message id="msgCANVENDET" for="cantidad"/>
+
+                        <p:outputLabel value="FECHA" for="fecha" style="color:black; font-weight:bold; font-size:16px"/>
+                        <p:calendar id="fecha" value="#{VentaDetalleC.venta.FECVEN}"
+                                    pattern="dd-MM-yyyy" navigator="true" locale="de" maxdate="@now"
+                                    required="true" requiredMessage="Ingrese el Vencimiento" size="18">
+                        </p:calendar>
+                        <p:message id="msgFECVEN" for="fecha"/>
+
+                        <p:outputLabel value="El PRECIO ES" style="color:black; font-weight:bold; font-size:16px"/>
+                        <p:inputText id="precio" value="#{VentaDetalleC.ventadetalle.PREPRO}" style="color:black; font-weight:bold; width:100px" disabled="true"/>
+                        <p:message id="msgPREPRO" for="precio"/>
+
+                        <p:outputLabel value="ES STOCK ES" style="color:black; font-weight:bold; font-size:16px"/>
+                        <p:inputText id="stock" value="#{VentaDetalleC.ventadetalle.STOPRO}" style="color:black; font-weight:bold; width:100px" disabled="true"/>
+                        <p:message id="msgSTOCK" for="stock"/>
+
+                    </p:panelGrid>
+                    <center>
+                        <p/>
+                        <p:commandButton value="Nuevo" actionListener="#{VentaDetalleC.limpiar()}" update="frmVenta" style="font-weight:bold; font-size:16px"/>
+                        <p:commandButton value="Agregar" actionListener="#{VentaDetalleC.validarStock()}" update="frmVenta :frmVentaDetalle msgIDCLI msgIDEMP msgIDPRO"  icon="pi pi-plus" style="font-weight:bold; font-size:16px"/>
+                        <p:commandButton value="Anular" actionListener="#{VentaDetalleC.anular()}" update="frmVenta" icon="pi pi-times" style="font-weight:bold; font-size:16px"/>
+                    </center>
+                </h:form>
+
+                <!--            Fin del Formulario Producto-->
+                <p:spacer height="0"/>
+
+
+                <!--                    listado de Producto     -->
+                <h:form id="frmVentaDetalle">
+
+                    <p:dataTable var="vendet" id="tablaVentaDetalle" value="#{VentaDetalleC.listadoVentaDetalle}"
+                                 emptyMessage="La lista esta sin productos :(" style="width: 80%;"
+                                 editable="true" editMode="cell" editInitEvent="dblclick">
+                        <p:column style="width:80px; color:black" headerText="ID" visible="false">
+                            <h:outputText value="#{vendet.IDPRO}"/>
+                        </p:column>
+                        <p:column style="width:80px; color:black" headerText="PRODUCTO">
+                            <h:outputText value="#{vendet.NOMPRO}"/>
+                        </p:column>
+                        <p:column style="width:150px; color:black" headerText="DESCRIPCIÓN">
+                            <h:outputText value="#{vendet.DESPRO}"/>
+                        </p:column>
+                        <p:column style="width:30px; color:black" headerText="STOCK">
+                            <h:outputText value="#{vendet.producto.STOPRO}"/>
+                        </p:column>
+                        <p:column style="width:50px; color:black" headerText="CANTIDAD">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{vendet.CANVENDET}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:spinner value="#{vendet.CANVENDET}" max="50" min="1"
+                                               maxlength="2" style="width: 80px">
+                                        <p:ajax update="tablaVentaDetalle SUBVENDET" event="keyup" delay="800"/>
+                                    </p:spinner>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width:50px; color:black" headerText="PRECIO">
+                            <h:outputText value="#{vendet.producto.PREPRO}"/>
+                        </p:column>
+                        <p:column style="width:50px; color:black" headerText="SUBTOTAL">
+                            <h:outputText id="SUBVENDET" value="#{vendet.SUBVENDET}">
+                                <f:convertNumber type="currency" currencySymbol="S/. " minFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="" style="width:20px; color:black" exportable="false">
+                            <p:column>
+                                <p:commandButton icon="pi pi-trash" actionListener="${VentaDetalleC.eliminarFila(vendet)}" update="frmVentaDetalle tablaVentaDetalle"/>
+                            </p:column>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:separator/>
+                    <h:panelGrid id="total" columns="2" style="font-size: 25px; margin: 0 auto; color: black">
+                        TOTAL = S/
+                        <h:outputText style="align-content: center; alignment-adjust: central; font-weight:bold"
+                                      value="#{VentaDetalleC.venta.TOTVEN}">
+                            <f:convertNumber minFractionDigits="2"/>
+                        </h:outputText>
+                    </h:panelGrid>
+                    <p:separator/>
+                </h:form>     
+
+
+
+
+                <h:form id="frmListaVenta">
+
+                    <p:panelGrid columns="5">
+                        <p:outputLabel value="Realizar Venta" style="color:black; font-weight:bold; font-size:18px"/>
+                        <p:commandButton id="Registrar" actionListener="#{VentaDetalleC.registrarVenta()}" value="Registrar" icon="pi pi-save"
+                                         style="font-size: 25px; font-weight:bold" update=":frmVenta :frmVentaDetalle :frmListaVenta">
+                            <p:confirm header="Confirmación" message="¿Deseas Registrar?" icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:panelGrid>
+
+                    <p:separator/>
+
+                    <p:fieldset legend="LISTA DE VENTAS" toggleable="true" style="align-content: center; width: 70%">
+                        <p:dataTable var="lista" id="Listaventa" value="#{VentaDetalleC.listaVenta}"
+                                     rows="5" paginator="true"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                     rowsPerPageTemplate="5,10,15,20" style="width: 90%;">
+                            <f:facet name="header">
+                                <div style="float:right">
+                                    <p:commandButton value="EXCEL" icon="pi pi-file-excel" style="font-weight:bold">
+                                        <p:dataExporter type="xls" target=":frmListaVenta:Listaventa" fileName="Lista de Clientes_XLS" options="#{ClienteC.xls}"/>
+                                    </p:commandButton>
+                                </div>
+                            </f:facet>
+                            <f:facet name= "header"><center style="color:black; font-weight:bold; font-size:25px">LISTA DE VENTAS</center></f:facet>
+                            <p:column style="width:40px; color:black" headerText="ID" sortBy="#{lista.IDVEN}" filterBy="#{lista.IDVEN}">
+                                <h:outputText value="#{lista.IDVEN}"/>
+                            </p:column>
+                            <p:column style="width:50px; color:black" headerText="DNI" sortBy="#{lista.cliente.DNICLI}" filterBy="#{lista.cliente.DNICLI}">
+                                <h:outputText value="#{lista.cliente.DNICLI}"/>
+                            </p:column>
+                            <p:column style="width:150px; color:black" headerText="CLIENTE" sortBy="#{lista.cliente.NOMCLI}" filterBy="#{lista.cliente.NOMCLI}">
+                                <h:outputText value="#{lista.cliente.NOMCLI}"/>
+                            </p:column>
+                            <p:column style="width:60px; color:black" headerText="FECHA" sortBy="#{lista.FECVEN}" filterBy="#{lista.FECVEN}">
+                                <h:outputText value="#{lista.FECVEN}">
+                                    <f:converter converterId="fechaCV"/>
+                                </h:outputText>
+                            </p:column>    
+                            <p:column style="width:20px; color:black" headerText="TOTAL" sortBy="#{lista.TOTVEN}" filterBy="#{lista.TOTVEN}">
+                                <h:outputText value="#{lista.TOTVEN}"/>
+                            </p:column>
+                            <p:column style="width:4px; text-align: center">
+                                <p:commandButton icon="pi pi-credit-card" onclick="this.form.target = '_blank'" styleClass="rounded-button ui-button-secondary"
+                                                 ajax="false" title="Boleta" actionListener="#{VentaDetalleC.reporteVenta(lista.IDVEN)}"/>
+                            </p:column>
+                            <f:facet name="footer">
+                                <center style="color: black; font-weight:bold; font-size: 20px">
+                                    EN TOTAL HAY #{fn:length(VentaDetalleC.listaVenta)} REGISTROS
+                                </center>
+                            </f:facet>
+                        </p:dataTable>
+                    </p:fieldset>
+                </h:form>
+
+
+                <h:form id="form">
+                    <p:confirmPopup style="margin: initial" global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirm-popup-yes" icon="pi pi-check" async="true"/>
+                        <p:commandButton value="No" type="button" styleClass="ui-confirm-popup-no" icon="pi pi-times"/>
+                    </p:confirmPopup>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+                    </p:confirmDialog>
+                </h:form>
+            </h:body>
+        </center>
+    </ui:define>
+
+</ui:composition>

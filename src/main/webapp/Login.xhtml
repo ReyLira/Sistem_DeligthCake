@@ -1,0 +1,61 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Ingreso al Sistema - Login Básico 1</title>
+        <link href="resources/css/flags/loguie.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <p:growl id="mensajes" severity="info,fatal,warn" showSummary="true" showDetail="true">
+        <p:autoUpdate/>
+    </p:growl>
+
+    <h:body id="body">
+        <center>
+
+            <h:form id="fmrLogin">
+                <p:growl id="msj" showDetail="true" life="2000"/>
+
+                <div class="login">
+                    <header>
+                        <h2 style="font-family: 'Lobster', cursive; font-size: 350%">Login</h2>
+                        <h3 style="font-family: 'Pacifico', cursive; font-size: 150%">Bienvenido a DelightCake</h3>
+
+
+                        <p>Encargados de la Preparación y Ventas de Pasteles, Bocaditos, Postres</p>
+                    </header>  
+                </div>
+
+                <p:inputText id="User" value="#{UsuarioC.usuario}" placeholder="Usuario" maxlength="8" style="width: 270px;height: 50px; margin-top: 2.5%;padding: 15px;
+                             font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"/>
+                <p:password id="Contra" value="#{UsuarioC.password}" placeholder="Contraseña" style="width: 270px;height: 50px; margin-top: 2.5%;padding: 15px;
+                            font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"/>
+                <center>
+                    <p:captcha label="Captcha" requiredMessage="Falta verificar Captcha" rendered="#{UsuarioC.captcha == 1 eq true}"/>
+                    <p:commandButton id="btnlogin" actionListener="#{UsuarioC.login()}"
+                                     value="INICIAR SESIÓN" update="fmrLogin,:mensajes,btnlogin User Contra"
+                                     onstart="if(#{UsuarioC.bloquear}){PF('widgetBlock').show()}" 
+                                     oncomplete="PF('widgetBlock').hide()" icon="pi pi-check-circle"
+                                     class="boton" style="margin: 20px; align: center; background-color:#80ff80; border-color:#80ff80; font-size: 20px;font-family: 'Abel'" >
+                    </p:commandButton>
+                </center>   
+                <br/>
+                
+                <p:linkButton value="Registrate" icon="pi pi-sign-in" outcome="Registrar" style="margin-right:10px ; background-color:#ecb3ff; border-color:#ecb3ff; font-size: 13px;font-family: 'Abel'"/>   
+                <p:linkButton value="¿Olvidé mi contraseña?" icon="pi pi-key" outcome="Password" style="margin-lef:10px; background-color:#b3b3ff; border-color:#b3b3ff; font-size: 13px;font-family: 'Abel'"/> 
+
+                <br/>
+                <p:blockUI block="body" widgetVar="widgetBlock">
+                    <p:graphicImage value="resources/images/conteo.gif"></p:graphicImage>
+                </p:blockUI>
+
+                <div class="layout-topbar-left">
+                    <a id="logolink" name="logolink" href="Inicio.xhtml" class="layout-topbar-logo">
+                        <img id="j_idt12" src="#{request.contextPath}/faces/resources/images/log03.png" alt="" style="width:300px;height:300px;"/>
+                    </a>
+                </div>
+            </h:form>
+        </center>
+    </h:body>
+    <link href="resources/css/logins.css" rel="stylesheet" type="text/css"/>
+</html>

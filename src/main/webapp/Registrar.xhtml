@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>CLIENTE</title>
+        <link href="resources/css/flags/loguie.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <center>
+        <p:growl id="mensajes" severity="info,fatal,warn" showSummary="true" showDetail="true">
+            <p:autoUpdate/>
+        </p:growl>
+
+        <h:body id="body">
+            <h:form id="frmRegPro" styleClass="ui-noborder">
+                
+                <div class="login">
+                    <header>
+                        <h2 style="font-family: 'Pacifico', cursive; font-size: 250%">Registro Cliente</h2>   
+                    </header>  
+                </div>
+
+                    <p:outputLabel value ="DNI" style="color:black; font-weight:bold; font-size:16px"/>
+                    <p:commandButton actionListener="#{ClienteC.buscarPorDNICliente()}" update="NOMCLI APEPATCLI APEMATCLI TELCLI EMACLI CODUBI DOMCLI"
+                                     icon="pi pi-search" style="font-weight:bold; font-size:16px">
+                        <p:inputText id="DNICLI"  value="#{ClienteC.cliente.DNICLI}" onkeyup="validarDNIcliente()" maxlength="8" style="width: 220px;height: 50px; margin-top: 2.5%; margin-left:12.5% ;padding: 15px;
+                                     font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                                     placeholder="DNI del cliente" required="true" requiredMessage="Ingrese el DNI" >
+                            <p:keyFilter regEx="/[0-9]/"/>
+                            <f:validator validatorId="dniV"/>
+                            <p:ajax update="msgDNICLI" event="keyup" delay="800"/>
+                            <p:tooltip for="DNICLI" value="Ingrese el DNI" trackMouse="focus"/>                                 
+                        </p:inputText>    
+                    </p:commandButton>                  
+                    <p:message id="msgDNICLI" for="DNICLI"/> 
+
+
+                    <p:outputLabel value ="NOMBRES" style="color:black; font-weight:bold; font-size:16px"/> 
+                    <p:inputText id="NOMCLI"  value="#{ClienteC.cliente.NOMCLI}" style="width: 270px;height: 50px; margin-top: 2.5%;margin-left: 2.5%;padding: 15px;
+                                 font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                                 placeholder="Nombre del cliente" requiredMessage="Ingrese los NOMBRES">
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        <p:ajax update="msgNOMCLI" event="keyup" delay="800"/>
+                        <p:tooltip for="NOMCLI" value="Ingrese el Nombre" trackMouse="focus"/>
+                    </p:inputText>
+                    <p:message id="msgNOMCLI" for="NOMCLI"/>
+
+                <p:outputLabel value ="APELLIDOS" style="color:black; font-weight:bold; font-size:16px"/> 
+                <p:inputText id="APEPATCLI"  value="#{ClienteC.cliente.APEPATCLI}" style="width: 270px;height: 50px; margin-top: 2.5%;margin-left: 2.5%;padding: 15px;
+                             font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                             placeholder="Apellido del cliente" requiredMessage="Ingrese los APELLIDOS">
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                    <p:ajax update="msgAPEPATCLI" event="keyup" delay="800"/>
+                    <p:tooltip for="APEPATCLI" value="Ingrese el Apellido" trackMouse="focus"/>
+                </p:inputText>
+                <p:message id="msgAPEPATCLI" for="APEPATCLI"/>  
+                
+                <p:outputLabel value ="APELLIDOS" style="color:black; font-weight:bold; font-size:16px"/> 
+                <p:inputText id="APEMATCLI"  value="#{ClienteC.cliente.APEPATCLI}" style="width: 270px;height: 50px; margin-top: 2.5%;margin-left: 2.5%;padding: 15px;
+                             font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                             placeholder="Apellido del cliente" requiredMessage="Ingrese los APELLIDOS">
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                    <p:ajax update="msgAPEMATCLI" event="keyup" delay="800"/>
+                    <p:tooltip for="APEMATCLI" value="Ingrese el Apellido" trackMouse="focus"/>
+                </p:inputText>
+                <p:message id="msgAPEMATCLI" for="APEMATCLI"/>  
+
+                <p:outputLabel value ="TELEFONO" style="color:black; font-weight:bold; font-size:16px"/>
+                <p:inputText  id="TELCLI"  value="#{ClienteC.cliente.TELCLI}" onkeyup="validarCelularCliente()" maxlength="9" style="width: 270px;height: 50px; margin-top: 2.5%;margin-left: 2.5%;padding: 15px;
+                              font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                              placeholder="Telefono del cliente" requiredMessage="Ingrese el TELEFONO">
+                    <p:keyFilter regEx="/[0-9]/"/>
+                    <f:validator validatorId="celularV"/>
+                    <p:ajax update="msgTELCLI" event="keyup"  delay="800"/>
+                    <p:tooltip for="TELCLI" value="Ingrese el TELEFONO" trackMouse="focus"/>
+                </p:inputText>
+                <p:message id="msgTELCLI" for="TELCLI"/>   
+
+                <p:outputLabel value ="EMAIL" style="color:black; font-weight:bold; font-size:16px"/>
+                <p:inputText  id="EMACLI"  value="#{ClienteC.cliente.EMACLI}" style="width: 270px;height: 50px; margin-top: 2.5%;margin-left: 10.5%;padding: 15px;
+                              font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                              placeholder="Email del cliente"  requiredMessage="Ingrese el EMAIL">
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_@_._0-9 ]/"/>
+                    <f:validator validatorId="emailV"/>
+                    <p:ajax update="msgEMACLI" event="keyup" delay="800"/>
+                    <p:tooltip for="EMACLI" value="Ingrese el EMAIL" trackMouse="focus"/>
+                </p:inputText>
+                <p:message id="msgEMACLI" for="EMACLI"/> 
+
+                <p:outputLabel value ="DISTRITO" style="color:black; font-weight:bold; font-size:16px"/>
+                <p:selectOneMenu id="CODUBI" value="#{ClienteC.cliente.CODUBI}" style="width: 270px;height: 45px; margin-top: 2.5%;margin-left: 3.5%;padding: 0px;
+                                 font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;" filter="true" filterMatchMode="contains" placeholder="Distrito del cliente" requiredMessage="Seleccione el Distrito">
+                    <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                    <f:selectItems value="#{ubigeoC.listadoUbigeo}" var="ubigeo"
+                                   itemValue="#{ubigeo.CODUBI}"
+                                   itemLabel="#{ubigeo.DISUBI} - #{ubigeo.PROUBI} - #{ubigeo.DEPUBI}"/>
+                    <p:ajax update="msgCODUBI" event="keyup" delay="800"/>
+                    <p:tooltip for="CODUBI" value="Ingrese el DISTRITO" trackMouse="focus"/>
+                </p:selectOneMenu>
+                <p:message id="msgCODUBI" for="CODUBI"/>
+
+                <p:outputLabel value ="DOMICILIO" style="color:black; font-weight:bold; font-size:16px"/>
+                <p:inputText id="DOMCLI"  value="#{ClienteC.cliente.DOMCLI}"  style="width: 270px;height: 50px; margin-top: 2.5%;margin-left: 1.5%;padding: 15px;
+                             font-size: 15px;font-family: 'Abel', sans-serif;color: #5E6472;outline: none;border: none;border-radius: 0px 5px 5px 0px;transition: 0.2s linear;"
+                             placeholder="Domicilio del cliente" requiredMessage="Ingrese el DOMICILIO">
+                    <p:keyFilter regEx="/[a-zA-Z_0-9_ ]/"/>
+                    <p:ajax update="msgDOMCLI" event="keyup" delay="800"/>
+                    <p:tooltip for="DOMCLI" value="Ingrese el Domicilio" trackMouse="focus"/>
+                </p:inputText>
+                <p:message id="msgDOMCLI" for="DOMCLI"/> 
+                <p:commandButton  action="#{ClienteC.registrar()}" value="Registrar" style="margin-right:10px ; background-color:#ecb3ff; border-color:#ecb3ff; text-align: center;font-size: 15px;font-family: 'Abel'" update=" msgNOMCLI msgAPEPATCLI msgAPEMATCLI msgDNICLI msgTELCLI msgEMACLI msgCODUBI msgDOMCLI frmRegPro"
+                                  widgetVar="btnregistrarcli">
+                </p:commandButton>
+                <p:commandButton  action="#{ClienteC.limpiar()}" value="Limpiar" style="margin-right:10px ; background-color:#80ff80; border-color:#80ff80; text-align: center;font-size: 15px;font-family: 'Abel'"/>
+                <p:linkButton value="Iniciar" outcome="Login" style="margin-lef:10px; margin-top:4.5% ; background-color:#b3b3ff; border-color:#b3b3ff; font-size: 15px;font-family: 'Abel'"/> 
+            </h:form>
+
+        </h:body>
+        <link href="resources/css/registrar.css" rel="stylesheet" type="text/css"/>
+        <link href="resources/css/logins.css" rel="stylesheet" type="text/css"/>
+    </center>
+</html>
